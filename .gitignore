@@ -1,0 +1,15 @@
+target
+launch
+*.iml
+*.log
+*.tar
+*.tar.gz
+.idea
+.settings
+.project
+.classpath
+.bsp
+test-data/
+*.wav
+lib/math-scala-2.12-assembly-1.0.jar
+jar/
