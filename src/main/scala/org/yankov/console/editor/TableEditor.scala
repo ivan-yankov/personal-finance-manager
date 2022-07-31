@@ -4,7 +4,10 @@ import Operations._
 
 import java.io.{BufferedReader, InputStreamReader}
 import java.nio.file.{Files, Paths}
+import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
+import scala.io.AnsiColor._
+import scala.io.StdIn._
 
 object TableEditor {
   private var table: Table = _
@@ -26,6 +29,33 @@ object TableEditor {
       return
     }
 
+    renderAvailableCommands()
+    renderTable(lines)
+
+    @tailrec
+    def waitForCommand(): Unit = {
+      println()
+      print("Command: ")
+      readChar() match {
+        case 'q' => sys.exit()
+        case _ => waitForCommand()
+      }
+    }
+
+    waitForCommand()
+  }
+
+  private def renderAvailableCommands(): Unit = {
+    val s = List(
+      "Available commands:",
+      "  q - quit"
+    ).map(x => WHITE_B + x + RESET).mkString("\n")
+
+    println(s)
+    println()
+  }
+
+  private def renderTable(lines: Seq[String]): Unit = {
     parseTable(lines, ",") match {
       case Left(error) =>
         println("Unable to parse table:\n\t" + error)
