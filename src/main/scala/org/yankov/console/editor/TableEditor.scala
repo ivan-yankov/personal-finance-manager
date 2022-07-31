@@ -8,6 +8,7 @@ import scala.jdk.CollectionConverters._
 
 object TableEditor {
   private var table: Table = _
+  private var tableFocus: TableFocus = TableFocus(0, 0)
 
   def main(args: Array[String]): Unit = {
     val lines = args.headOption match {
@@ -30,7 +31,7 @@ object TableEditor {
         println("Unable to parse table:\n\t" + error)
       case Right(t) =>
         table = t
-        println(printTable(table))
+        println(printTable(table, tableFocus))
     }
   }
 }

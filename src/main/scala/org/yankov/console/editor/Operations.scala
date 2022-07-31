@@ -1,5 +1,7 @@
 package org.yankov.console.editor
 
+import scala.io.AnsiColor._
+
 object Operations {
   def insertRowBefore(table: Table, index: Int): Table = {
     if (table.rows.isEmpty) Table(table.columns, Seq(createRow(table.columns.size)))
@@ -38,18 +40,36 @@ object Operations {
     )
   }
 
-  def printTable(table: Table): String = {
+  def printTable(table: Table, tableFocus: TableFocus): String = {
     val columnDelimiter = " | "
     val columnsWithSizes = table
       .columns
       .zipWithIndex
-      .map(x => getColumn(table, x._2).map(y => y.length).max)
-      .zip(table.columns)
-    val header = columnsWithSizes.map(x => align(x._2.header, x._2.alignment, x._1)).mkString(columnDelimiter)
-    val headerBorder = columnsWithSizes.map(x => Seq.fill(x._1)("-").mkString).mkString(columnDelimiter)
+      .map(
+        x =>
+          (
+            x._1, // column
+            x._2, // column index
+            getColumn(table, x._2).map(y => y.length).max, // field size
+            tableFocus.col == x._2 // focused
+          )
+      )
+
+    val header = columnsWithSizes
+      .map(x => printField(x._1.header, x._1.alignment, x._3, x._4))
+      .mkString(columnDelimiter)
+
+    val headerBorder = columnsWithSizes.map(x => Seq.fill(x._3)("-").mkString).mkString(columnDelimiter)
+
     val rows = table
       .rows
-      .map(x => x.zip(columnsWithSizes).map(y => align(y._1, y._2._2.alignment, y._2._1)).mkString(columnDelimiter))
+      .zipWithIndex
+      .map(
+        rowWithIndex => rowWithIndex._1
+          .zip(columnsWithSizes)
+          .map(y => printField(y._1, y._2._1.alignment, y._2._3, y._2._4 && rowWithIndex._2 == tableFocus.row))
+          .mkString(columnDelimiter)
+      )
 
     (headerBorder +: header +: headerBorder +: rows).mkString("\n")
   }
@@ -66,22 +86,26 @@ object Operations {
     }
   }
 
-  def align(s: String, alignment: ColumnAlignment, fieldSize: Int): String = {
+  def printField(s: String, alignment: ColumnAlignment, fieldSize: Int, focused: Boolean): String = {
     if (s.length >= fieldSize) return s
 
     def detectAlignment: ColumnAlignment = {
       if (s.forall(x => x.isDigit || x.equals('.'))) RightColumnAlignment
       else LeftColumnAlignment
     }
+
     val a = if (alignment == UnknownColumnAlignment) detectAlignment else alignment
 
     val spaces = Seq.fill(fieldSize - s.length)(" ").mkString
 
-    a match {
+    val r = a match {
       case LeftColumnAlignment => s + spaces
       case RightColumnAlignment => spaces + s
       case _ => s
     }
+
+    if (focused) BLUE_B + r + RESET
+    else r
   }
 
   private def createRow(size: Int): TableRow = Seq.fill(size)("")
