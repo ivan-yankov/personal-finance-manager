@@ -1,7 +1,7 @@
 import java.nio.file.{Files, Path, Paths}
 import scala.collection.JavaConverters._
 
-name := "table-editor"
+name := "personal-finance-manager"
 
 version := "0.1"
 
@@ -25,7 +25,7 @@ collectDependencies := {
       )
   }
 
-  val cp: Seq[File] = (fullClasspath in Runtime).value.files
+  val cp: Seq[File] = (Runtime / fullClasspath).value.files
   collectJarsFromDir(cp.map(x => x.toPath))
 
   collectJarsFromDir(Files.walk(Paths.get("target", "scala-2.13"), 1).iterator().asScala.toList)
