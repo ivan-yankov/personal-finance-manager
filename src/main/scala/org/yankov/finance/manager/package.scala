@@ -1,6 +1,6 @@
-package org.yankov.console
+package org.yankov.finance
 
-package object editor {
+package object manager {
   type TableRow = Seq[String]
 
   trait ColumnAlignment

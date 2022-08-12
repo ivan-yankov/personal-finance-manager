@@ -1,4 +1,4 @@
-package org.yankov.console.editor
+package org.yankov.finance.manager
 
 import scala.io.AnsiColor._
 
