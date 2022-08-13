@@ -1,33 +1,41 @@
 package org.yankov.finance.manager
 
-import Operations._
 import Resources._
-import org.yankov.finance.manager.Buttons.button
+import org.yankov.finance.manager.Buttons._
 
 import java.awt.{ComponentOrientation, FlowLayout}
 import java.nio.file.{Files, Paths}
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.swing._
 import scala.jdk.CollectionConverters._
 
 object Main {
-  private val tableModel = new FinanceManagerTableModel()
+  private val incomeTableModel: FinanceManagerTableModel = new FinanceManagerTableModel()
+  private val expenseTableModel: FinanceManagerTableModel = new FinanceManagerTableModel()
+
+  var incomeTable: JTable = _
+  var expenseTable: JTable = _
 
   def main(args: Array[String]): Unit = {
     val tablesContainer: Option[JPanel] = args.headOption match {
       case Some(incomeFileName) =>
         val incomeLines = readFile(incomeFileName)
-        val incomeTable = createTable(incomeLines)
+        val incomeJTable = createTable(incomeLines, incomeTableModel)
         args.tail.headOption match {
           case Some(expenseFileName) =>
             val expenseLines = readFile(expenseFileName)
-            val expenseTable = createTable(expenseLines)
-            if (incomeTable.isDefined && expenseTable.isDefined) {
+            val expenseJTable = createTable(expenseLines, expenseTableModel)
+            if (incomeJTable.isDefined && expenseJTable.isDefined) {
+              incomeTable = incomeJTable.get
+              expenseTable = expenseJTable.get
+
               val layout = new FlowLayout()
               layout.setAlignment(FlowLayout.LEFT)
               val panel = new JPanel()
               panel.setLayout(layout)
-              panel.add(renderTable(incomeTable.get, incomeTitle))
-              panel.add(renderTable(expenseTable.get, expenseTitle))
+              panel.add(renderTable(incomeTable, incomeTitle))
+              panel.add(renderTable(expenseTable, expenseTitle))
               panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT)
               Some(panel)
             }
@@ -48,12 +56,13 @@ object Main {
     frame.setVisible(true)
   }
 
-  private def operationControls: JPanel = {
+  private def operationControls(source: String): JPanel = {
     val panel = new JPanel()
     val layout = new BoxLayout(panel, BoxLayout.Y_AXIS)
     panel.setLayout(layout)
-    panel.add(button(addRow, addRowCommand))
-    panel.add(button(insertRow, insertRowCommand))
+    panel.add(button(Resources.insertRowBefore, command(insertRowBeforeCommand, source)))
+    panel.add(button(Resources.insertRowAfter, command(insertRowAfterCommand, source)))
+    panel.add(button(Resources.deleteRow, command(deleteRowCommand, source)))
     panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT)
     panel
   }
@@ -67,13 +76,13 @@ object Main {
     val panel = new JPanel()
     panel.setLayout(layout)
     panel.add(scrollPane)
-    panel.add(operationControls)
+    panel.add(operationControls(title))
     panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT)
     panel.setBorder(BorderFactory.createTitledBorder(title))
     panel
   }
 
-  private def createTable(lines: Seq[String]): Option[JTable] = {
+  private def createTable(lines: Seq[String], tableModel: FinanceManagerTableModel): Option[JTable] = {
     parseTable(lines, ",") match {
       case Left(error) =>
         logError("Unable to parse table:\n\t" + error)
@@ -81,6 +90,28 @@ object Main {
       case Right(table) =>
         tableModel.setTable(table)
         Some(new JTable(tableModel))
+    }
+  }
+
+  def parseTable(lines: Seq[String], columnSeparator: String): Either[String, Table] = {
+    val headers = lines.head.split(columnSeparator)
+
+    def item(columns: Array[String]): Option[TableItem] = {
+      if (columns.length == headers.size) Some(
+        TableItem(
+          name = columns(0),
+          date = LocalDate.parse(columns(1), DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+          value = columns(2).toInt
+        )
+      )
+      else None
+    }
+
+    val data = lines.tail.map(x => item(x.split(columnSeparator)))
+    if (data.forall(x => x.isDefined)) Right(Table(headers, data.map(_.get)))
+    else {
+      val wrongLineNumbers = data.zipWithIndex.filter(x => x._1.size != headers.size).map(x => x._2)
+      Left(s"Column count mismatch at lines [${wrongLineNumbers.mkString(",")}]")
     }
   }
 

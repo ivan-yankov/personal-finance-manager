@@ -6,9 +6,12 @@ object Resources {
   val incomeTitle: String = "Приходи"
   val expenseTitle: String = "Разходи"
 
-  val addRow: String = "Добавяне на ред"
-  val addRowCommand: String = "add-row"
+  val insertRowBefore: String = "Вмъкване преди"
+  val insertRowBeforeCommand: String = "insert-row-before"
 
-  val insertRow: String = "Вмъкване на ред"
-  val insertRowCommand: String = "insert-row"
+  val insertRowAfter: String = "Вмъкване след"
+  val insertRowAfterCommand: String = "insert-row-after"
+
+  val deleteRow: String = "Изтриване"
+  val deleteRowCommand: String = "delete-row"
 }

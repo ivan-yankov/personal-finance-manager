@@ -4,7 +4,7 @@ import java.time.LocalDate
 import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel
 
-class FinanceManagerTableModel() extends TableModel {
+class FinanceManagerTableModel extends TableModel {
   private var table: Table = _
 
   def getTable: Table = table
@@ -43,10 +43,45 @@ class FinanceManagerTableModel() extends TableModel {
 
   override def setValueAt(value: Any, row: Int, col: Int): Unit = {
     val updatedData = table.data.zipWithIndex.map(x => if (x._2 == row) setField(x._1, col, value) else x._1)
-    table = Table(table.headers, updatedData)
+    setTable(Table(table.headers, updatedData))
   }
 
   override def addTableModelListener(tableModelListener: TableModelListener): Unit = {}
 
   override def removeTableModelListener(tableModelListener: TableModelListener): Unit = {}
+
+  def insertRowBefore(index: Int): Unit = {
+    val newTable = {
+      if (table.data.isEmpty || invalidRowIndex(index)) Table(table.headers, Seq(createRow))
+      else Table(
+        table.headers,
+        table.data.take(index) ++ Seq(createRow) ++ table.data.takeRight(table.data.size - index)
+      )
+    }
+
+    setTable(newTable)
+  }
+
+  def insertRowAfter(index: Int): Unit = {
+    val newTable = {
+      if (table.data.isEmpty || invalidRowIndex(index)) Table(table.headers, Seq(createRow))
+      else Table(
+        table.headers,
+        table.data.take(index + 1)
+          ++ Seq(createRow)
+          ++ table.data.takeRight(table.data.size - index - 1)
+      )
+    }
+
+    setTable(newTable)
+  }
+
+  def deleteRow(index: Int): Unit = {
+    if (table.data.nonEmpty || !invalidRowIndex(index))
+      setTable(Table(table.headers, table.data.take(index) ++ table.data.takeRight(table.data.size - index - 1)))
+  }
+
+  private def createRow: TableItem = TableItem(name = "", date = LocalDate.MIN, value = 0.0)
+
+  private def invalidRowIndex(index: Int): Boolean = index < 0 || index >= table.data.size
 }
