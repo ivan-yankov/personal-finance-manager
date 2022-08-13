@@ -5,7 +5,6 @@ import org.yankov.finance.manager.Buttons._
 
 import java.awt.{ComponentOrientation, FlowLayout}
 import java.nio.file.{Files, Paths}
-import java.time.LocalDate
 import javax.swing._
 import scala.jdk.CollectionConverters._
 
@@ -100,8 +99,8 @@ object Main {
       if (columns.length == headers.size) Some(
         TableItem(
           name = columns(0),
-          date = if (columns(1).isEmpty) LocalDate.MIN else LocalDate.parse(columns(1), dateTimeFormatter),
-          value = columns(2).toDouble
+          date = parseDate(columns(1)),
+          value = parseDouble(columns(2))
         )
       )
       else None

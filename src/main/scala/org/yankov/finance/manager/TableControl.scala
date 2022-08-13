@@ -22,7 +22,7 @@ class DateCellEditor extends AbstractCellEditor with TableCellEditor {
     val localDate = value.asInstanceOf[LocalDate]
 
     val date = {
-      if (localDate.equals(LocalDate.MIN))
+      if (localDate.equals(Resources.emptyDate))
         Date.from(LocalDate.now(zoneId).atStartOfDay(zoneId).toInstant)
       else
         Date.from(localDate.atStartOfDay(zoneId).toInstant)
@@ -36,15 +36,14 @@ class DateCellEditor extends AbstractCellEditor with TableCellEditor {
 class DateCellRenderer extends DefaultTableCellRenderer {
   override def setValue(value: Any): Unit = {
     setHorizontalAlignment(SwingConstants.RIGHT)
-    val date = value.asInstanceOf[LocalDate]
-    setText(if (date.equals(LocalDate.MIN)) "" else date.format(Resources.dateTimeFormatter))
+    setText(Resources.printValue(value.asInstanceOf[LocalDate]))
   }
 }
 
 class DoubleCellRenderer extends DefaultTableCellRenderer {
   override def setValue(value: Any): Unit = {
     setHorizontalAlignment(SwingConstants.RIGHT)
-    setText(String.format(Resources.doubleFormat, value.asInstanceOf[Double]))
+    setText(Resources.printValue(value.asInstanceOf[Double]))
   }
 }
 

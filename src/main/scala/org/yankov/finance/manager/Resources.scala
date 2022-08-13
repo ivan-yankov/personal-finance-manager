@@ -1,5 +1,6 @@
 package org.yankov.finance.manager
 
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 object Resources {
@@ -22,4 +23,15 @@ object Resources {
 
   val save: String = "Запис"
   val saveCommand: String = "save"
+
+  val emptyDate: LocalDate = LocalDate.MIN
+  val emptyValue: Double = 0.0
+
+  def printValue(x: Double): String = String.format(doubleFormat, x)
+
+  def printValue(date: LocalDate): String = if (emptyDate.equals(date)) "" else date.format(dateTimeFormatter)
+
+  def parseDouble(s: String): Double = s.toDouble
+
+  def parseDate(s: String): LocalDate = if (s.isEmpty) emptyDate else LocalDate.parse(s, dateTimeFormatter)
 }

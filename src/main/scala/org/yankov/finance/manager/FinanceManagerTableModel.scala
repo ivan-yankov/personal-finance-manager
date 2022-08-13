@@ -87,17 +87,14 @@ class FinanceManagerTableModel extends TableModel {
     val sep = ","
     val csv = List(
       table.headers.mkString(sep),
-      table.data.map(x => List(x.name, printDate(x.date), printValue(x.value)).mkString(sep)).mkString("\n")
+      table.data
+        .map(x => List(x.name, Resources.printValue(x.date), Resources.printValue(x.value)).mkString(sep))
+        .mkString("\n")
     ).mkString("\n")
     Files.write(Paths.get(fileName), csv.getBytes(StandardCharsets.UTF_8))
   }
 
-  private def createRow: TableItem = TableItem(name = "", date = LocalDate.MIN, value = 0.0)
+  private def createRow: TableItem = TableItem(name = "", date = Resources.emptyDate, value = Resources.emptyValue)
 
   private def invalidRowIndex(index: Int): Boolean = index < 0 || index >= table.data.size
-
-  private def printDate(date: LocalDate): String =
-    if (date.equals(LocalDate.MIN)) "" else date.format(Resources.dateTimeFormatter)
-
-  private def printValue(x: Double): String = String.format(Resources.doubleFormat, x)
 }
