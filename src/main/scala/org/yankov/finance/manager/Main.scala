@@ -6,7 +6,6 @@ import org.yankov.finance.manager.Buttons._
 import java.awt.{ComponentOrientation, FlowLayout}
 import java.nio.file.{Files, Paths}
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.swing._
 import scala.jdk.CollectionConverters._
 
