@@ -1,6 +1,9 @@
 package org.yankov.finance.manager
 
+import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, Paths}
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel
 
@@ -81,7 +84,16 @@ class FinanceManagerTableModel extends TableModel {
       setTable(Table(table.headers, table.data.take(index) ++ table.data.takeRight(table.data.size - index - 1)))
   }
 
+  def save(fileName: String): Unit = {
+    val csv = table.data.map(x => List(x.name, printDate(x.date), printValue(x.value)).mkString(",")).mkString("\n")
+    Files.write(Paths.get(fileName), csv.getBytes(StandardCharsets.UTF_8))
+  }
+
   private def createRow: TableItem = TableItem(name = "", date = LocalDate.MIN, value = 0.0)
 
   private def invalidRowIndex(index: Int): Boolean = index < 0 || index >= table.data.size
+
+  private def printDate(date: LocalDate): String = date.format(Resources.dateTimeFormatter)
+
+  private def printValue(x: Double): String = String.format("%.2f", x)
 }

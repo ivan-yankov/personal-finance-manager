@@ -34,8 +34,8 @@ object Main {
               layout.setAlignment(FlowLayout.LEFT)
               val panel = new JPanel()
               panel.setLayout(layout)
-              panel.add(renderTable(incomeTable, incomeTitle))
-              panel.add(renderTable(expenseTable, expenseTitle))
+              panel.add(renderTable(incomeTable, incomeTitle, incomeFileName))
+              panel.add(renderTable(expenseTable, expenseTitle, expenseFileName))
               panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT)
               Some(panel)
             }
@@ -56,18 +56,19 @@ object Main {
     frame.setVisible(true)
   }
 
-  private def operationControls(source: String): JPanel = {
+  private def operationControls(source: String, file: String): JPanel = {
     val panel = new JPanel()
     val layout = new BoxLayout(panel, BoxLayout.Y_AXIS)
     panel.setLayout(layout)
-    panel.add(button(Resources.insertRowBefore, command(insertRowBeforeCommand, source)))
-    panel.add(button(Resources.insertRowAfter, command(insertRowAfterCommand, source)))
-    panel.add(button(Resources.deleteRow, command(deleteRowCommand, source)))
+    panel.add(button(Resources.insertRowBefore, command(insertRowBeforeCommand, Seq(source))))
+    panel.add(button(Resources.insertRowAfter, command(insertRowAfterCommand, Seq(source))))
+    panel.add(button(Resources.deleteRow, command(deleteRowCommand, Seq(source))))
+    panel.add(button(Resources.save, command(saveCommand, Seq(file, source))))
     panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT)
     panel
   }
 
-  private def renderTable(table: JTable, title: String): JPanel = {
+  private def renderTable(table: JTable, title: String, file: String): JPanel = {
     val scrollPane = new JScrollPane(table)
     table.setFillsViewportHeight(true)
 
@@ -76,7 +77,7 @@ object Main {
     val panel = new JPanel()
     panel.setLayout(layout)
     panel.add(scrollPane)
-    panel.add(operationControls(title))
+    panel.add(operationControls(title, file))
     panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT)
     panel.setBorder(BorderFactory.createTitledBorder(title))
     panel
@@ -100,7 +101,7 @@ object Main {
       if (columns.length == headers.size) Some(
         TableItem(
           name = columns(0),
-          date = LocalDate.parse(columns(1), DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+          date = LocalDate.parse(columns(1), dateTimeFormatter),
           value = columns(2).toInt
         )
       )
