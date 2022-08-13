@@ -1,19 +1,9 @@
 package org.yankov.finance
 
+import java.time.LocalDate
+
 package object manager {
-  type TableRow = Seq[String]
+  case class TableItem(name: String, date: LocalDate, value: Double)
 
-  trait ColumnAlignment
-
-  case object UnknownColumnAlignment extends ColumnAlignment
-
-  case object LeftColumnAlignment extends ColumnAlignment
-
-  case object RightColumnAlignment extends ColumnAlignment
-
-  case class TableColumn(header: String, alignment: ColumnAlignment)
-
-  case class Table(columns: Seq[TableColumn], rows: Seq[TableRow])
-
-  case class TableFocus(row: Int, col: Int)
+  case class Table(headers: Seq[String], data: Seq[TableItem])
 }
