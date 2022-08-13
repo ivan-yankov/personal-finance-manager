@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter
 
 object Resources {
   val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+  val doubleFormat = "%.2f"
 
   val mainFrameTitle: String = "Персонално счетоводство"
   val wrongNumberOfArguments: String = "Wrong number of arguments. Expected: income-file expense-file"

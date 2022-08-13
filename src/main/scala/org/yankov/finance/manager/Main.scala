@@ -90,7 +90,7 @@ object Main {
         None
       case Right(table) =>
         tableModel.setTable(table)
-        Some(new JTable(tableModel))
+        Some(new TableControl(tableModel))
     }
   }
 
@@ -101,8 +101,8 @@ object Main {
       if (columns.length == headers.size) Some(
         TableItem(
           name = columns(0),
-          date = LocalDate.parse(columns(1), dateTimeFormatter),
-          value = columns(2).toInt
+          date = if (columns(1).isEmpty) LocalDate.MIN else LocalDate.parse(columns(1), dateTimeFormatter),
+          value = columns(2).toDouble
         )
       )
       else None
