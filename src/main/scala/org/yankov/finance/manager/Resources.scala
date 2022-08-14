@@ -1,9 +1,11 @@
 package org.yankov.finance.manager
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate, ZoneId}
 import java.time.format.DateTimeFormatter
+import java.util.Date
 
 object Resources {
+  val zoneId: ZoneId = ZoneId.systemDefault()
   val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
   val doubleFormat = "%.2f"
 
@@ -11,6 +13,7 @@ object Resources {
   val wrongNumberOfArguments: String = "Wrong number of arguments. Expected: income-file expense-file"
   val incomeTitle: String = "Приходи"
   val expenseTitle: String = "Разходи"
+  val balanceDateLabel: String = "Баланс към дата"
 
   val insertRowBefore: String = "Вмъкване преди"
   val insertRowBeforeCommand: String = "insert-row-before"
@@ -24,6 +27,9 @@ object Resources {
   val save: String = "Запис"
   val saveCommand: String = "save"
 
+  val calculate: String = "Изчисление"
+  val calculateCommand: String = "calculate"
+
   val emptyDate: LocalDate = LocalDate.MIN
   val emptyValue: Double = 0.0
 
@@ -34,4 +40,10 @@ object Resources {
   def parseDouble(s: String): Double = s.toDouble
 
   def parseDate(s: String): LocalDate = if (s.isEmpty) emptyDate else LocalDate.parse(s, dateTimeFormatter)
+
+  def dateNow: Date = Date.from(LocalDate.now(zoneId).atStartOfDay(zoneId).toInstant)
+
+  def toLocalDate(date: Date): LocalDate = Instant.ofEpochMilli(date.getTime).atZone(Resources.zoneId).toLocalDate
+
+  def balanceLabel(value: Double): String = String.format("Баланс: %.2f", value)
 }

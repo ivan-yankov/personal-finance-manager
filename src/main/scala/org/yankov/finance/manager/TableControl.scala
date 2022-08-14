@@ -3,16 +3,15 @@ package org.yankov.finance.manager
 import com.toedter.calendar.JDateChooser
 
 import java.awt.Component
-import java.time.{Instant, LocalDate, ZoneId}
+import java.time.LocalDate
 import java.util.Date
 import javax.swing.table.{DefaultTableCellRenderer, TableCellEditor, TableCellRenderer}
 import javax.swing.{AbstractCellEditor, JTable, SwingConstants}
 
 class DateCellEditor extends AbstractCellEditor with TableCellEditor {
-  private val zoneId = ZoneId.systemDefault()
   private val dateChooser: JDateChooser = new JDateChooser()
 
-  override def getCellEditorValue: Any = Instant.ofEpochMilli(dateChooser.getDate.getTime).atZone(zoneId).toLocalDate
+  override def getCellEditorValue: Any = Resources.toLocalDate(dateChooser.getDate)
 
   override def getTableCellEditorComponent(table: JTable,
                                            value: Any,
@@ -23,9 +22,9 @@ class DateCellEditor extends AbstractCellEditor with TableCellEditor {
 
     val date = {
       if (localDate.equals(Resources.emptyDate))
-        Date.from(LocalDate.now(zoneId).atStartOfDay(zoneId).toInstant)
+        Resources.dateNow
       else
-        Date.from(localDate.atStartOfDay(zoneId).toInstant)
+        Date.from(localDate.atStartOfDay(Resources.zoneId).toInstant)
     }
 
     dateChooser.setDate(date)

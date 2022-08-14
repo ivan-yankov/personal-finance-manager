@@ -1,5 +1,6 @@
 package org.yankov.finance.manager
 
+import java.awt.Color
 import java.awt.event.{ActionEvent, ActionListener}
 import javax.swing.{JButton, JTable}
 
@@ -13,7 +14,8 @@ object Buttons extends ActionListener {
     b
   }
 
-  def command(cmd: String, parameters: Seq[String]): String = cmd + cmdSeparator + parameters.mkString(cmdSeparator)
+  def command(cmd: String, parameters: Seq[String] = Seq()): String =
+    cmd + cmdSeparator + parameters.mkString(cmdSeparator)
 
   override def actionPerformed(actionEvent: ActionEvent): Unit = {
     val cmd = actionEvent.getActionCommand
@@ -26,6 +28,13 @@ object Buttons extends ActionListener {
       tbl.getModel.asInstanceOf[FinanceManagerTableModel].deleteRow(tbl.getSelectedRow)
     else if (cmd.startsWith(Resources.saveCommand))
       tbl.getModel.asInstanceOf[FinanceManagerTableModel].save(tableFile(cmd))
+    else if (cmd.startsWith(Resources.calculateCommand)) {
+      val balance = calculateBalance()
+      val color = if (scala.math.signum(balance) < 0) Color.RED else Color.GREEN
+      Main.balanceLabel.setText(Resources.balanceLabel(balance))
+      Main.balanceLabel.setForeground(color)
+    }
+
     tbl.repaint()
   }
 

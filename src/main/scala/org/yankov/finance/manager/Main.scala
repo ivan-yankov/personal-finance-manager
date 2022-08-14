@@ -1,6 +1,7 @@
 package org.yankov.finance.manager
 
 import Resources._
+import com.toedter.calendar.JDateChooser
 import org.yankov.finance.manager.Buttons._
 
 import java.awt.{ComponentOrientation, FlowLayout}
@@ -15,6 +16,9 @@ object Main {
   var incomeTable: JTable = _
   var expenseTable: JTable = _
 
+  val balanceDate = new JDateChooser()
+  val balanceLabel = new JLabel("")
+
   def main(args: Array[String]): Unit = {
     val tablesContainer: Option[JPanel] = args.headOption match {
       case Some(incomeFileName) =>
@@ -28,13 +32,13 @@ object Main {
               incomeTable = incomeJTable.get
               expenseTable = expenseJTable.get
 
-              val layout = new FlowLayout()
-              layout.setAlignment(FlowLayout.LEFT)
               val panel = new JPanel()
-              panel.setLayout(layout)
+              panel.setLayout(flowLayout)
               panel.add(renderTable(incomeTable, incomeTitle, incomeFileName))
               panel.add(renderTable(expenseTable, expenseTitle, expenseFileName))
+              panel.add(renderCalculationControls)
               panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT)
+
               Some(panel)
             }
             else None
@@ -54,14 +58,85 @@ object Main {
     frame.setVisible(true)
   }
 
-  private def operationControls(source: String, file: String): JPanel = {
+  private def flowLayout: FlowLayout = {
+    val layout = new FlowLayout()
+    layout.setAlignment(FlowLayout.LEFT)
+    layout
+  }
+
+  private def renderCalculationControls: JPanel = {
     val panel = new JPanel()
-    val layout = new BoxLayout(panel, BoxLayout.Y_AXIS)
+
+    val layout = new GroupLayout(panel)
     panel.setLayout(layout)
-    panel.add(button(Resources.insertRowBefore, command(insertRowBeforeCommand, Seq(source))))
-    panel.add(button(Resources.insertRowAfter, command(insertRowAfterCommand, Seq(source))))
-    panel.add(button(Resources.deleteRow, command(deleteRowCommand, Seq(source))))
-    panel.add(button(Resources.save, command(saveCommand, Seq(file, source))))
+
+    layout.setAutoCreateGaps(true)
+    layout.setAutoCreateContainerGaps(true)
+
+    val bl = new JLabel(Resources.balanceDateLabel)
+    val calculateButton = button(Resources.calculate, command(calculateCommand))
+
+    balanceDate.setDate(dateNow)
+
+    layout.setHorizontalGroup(
+      layout.createSequentialGroup()
+        .addGroup(
+          layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(bl, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MaxValue)
+            .addComponent(balanceDate, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MaxValue)
+            .addComponent(calculateButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MaxValue)
+            .addComponent(balanceLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MaxValue)
+        )
+    )
+
+    layout.setVerticalGroup(
+      layout.createSequentialGroup()
+        .addComponent(bl)
+        .addComponent(balanceDate)
+        .addComponent(calculateButton)
+        .addComponent(balanceLabel)
+        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE))
+    )
+
+    panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT)
+    panel
+  }
+
+  private def tableControls(source: String, file: String): JPanel = {
+    val panel = new JPanel()
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS))
+
+    val layout = new GroupLayout(panel)
+    panel.setLayout(layout)
+
+    layout.setAutoCreateGaps(true)
+    layout.setAutoCreateContainerGaps(true)
+
+    val b1 = button(Resources.insertRowBefore, command(insertRowBeforeCommand, Seq(source)))
+    val b2 = button(Resources.insertRowAfter, command(insertRowAfterCommand, Seq(source)))
+    val b3 = button(Resources.deleteRow, command(deleteRowCommand, Seq(source)))
+    val b4 = button(Resources.save, command(saveCommand, Seq(file, source)))
+
+    layout.setHorizontalGroup(
+      layout.createSequentialGroup()
+        .addGroup(
+          layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(b1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MaxValue)
+            .addComponent(b2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MaxValue)
+            .addComponent(b3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MaxValue)
+            .addComponent(b4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MaxValue)
+        )
+    )
+
+    layout.setVerticalGroup(
+      layout.createSequentialGroup()
+        .addComponent(b1)
+        .addComponent(b2)
+        .addComponent(b3)
+        .addComponent(b4)
+        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE))
+    )
+
     panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT)
     panel
   }
@@ -70,12 +145,10 @@ object Main {
     val scrollPane = new JScrollPane(table)
     table.setFillsViewportHeight(true)
 
-    val layout = new FlowLayout()
-    layout.setAlignment(FlowLayout.LEFT)
     val panel = new JPanel()
-    panel.setLayout(layout)
+    panel.setLayout(flowLayout)
     panel.add(scrollPane)
-    panel.add(operationControls(title, file))
+    panel.add(tableControls(title, file))
     panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT)
     panel.setBorder(BorderFactory.createTitledBorder(title))
     panel
