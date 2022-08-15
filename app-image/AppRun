@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd "$(dirname "$0")"
+# exec ./start.sh $1 $2
+./jre/bin/java -Xms2G -Xmx6G -Dfile.encoding=UTF-8 -classpath "jar/*" org.yankov.finance.manager.Main $1 $2
