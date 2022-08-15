@@ -29,13 +29,20 @@ object Buttons extends ActionListener {
     else if (cmd.startsWith(Resources.saveCommand))
       tbl.getModel.asInstanceOf[FinanceManagerTableModel].save(tableFile(cmd))
     else if (cmd.startsWith(Resources.calculateCommand)) {
-      val balance = calculateBalance()
+      val balance = calculateBalance
       val color = if (scala.math.signum(balance) < 0) Color.RED else Color.GREEN
       Main.balanceLabel.setText(Resources.balanceLabel(balance))
       Main.balanceLabel.setForeground(color)
     }
 
     tbl.repaint()
+  }
+
+  private def calculateBalance: Double = {
+    def tableTotal(table: Table): Double =
+      table.data.filterNot(x => x.date.equals(Resources.emptyDate)).map(x => x.value).sum
+
+    tableTotal(Main.incomeTableModel.getTable) - tableTotal(Main.expenseTableModel.getTable)
   }
 
   private def sourceTable(cmd: String): JTable = {

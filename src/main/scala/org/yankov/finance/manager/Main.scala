@@ -10,8 +10,8 @@ import javax.swing._
 import scala.jdk.CollectionConverters._
 
 object Main {
-  private val incomeTableModel: FinanceManagerTableModel = new FinanceManagerTableModel()
-  private val expenseTableModel: FinanceManagerTableModel = new FinanceManagerTableModel()
+  val incomeTableModel: FinanceManagerTableModel = new FinanceManagerTableModel()
+  val expenseTableModel: FinanceManagerTableModel = new FinanceManagerTableModel()
 
   var incomeTable: JTable = _
   var expenseTable: JTable = _
