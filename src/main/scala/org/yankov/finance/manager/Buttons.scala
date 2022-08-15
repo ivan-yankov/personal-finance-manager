@@ -39,8 +39,14 @@ object Buttons extends ActionListener {
   }
 
   private def calculateBalance: Double = {
-    def tableTotal(table: Table): Double =
-      table.data.filterNot(x => x.date.equals(Resources.emptyDate)).map(x => x.value).sum
+    def tableTotal(table: Table): Double = {
+      val balanceDate = Resources.toLocalDate(Main.balanceDate.getDate)
+      table.data
+        .filterNot(x => x.date.equals(Resources.emptyDate))
+        .filter(x => x.date.isBefore(balanceDate) || x.date.isEqual(balanceDate))
+        .map(x => x.value)
+        .sum
+    }
 
     tableTotal(Main.incomeTableModel.getTable) - tableTotal(Main.expenseTableModel.getTable)
   }
