@@ -7,4 +7,3 @@ cp -r app-image/* $DEST
 mkdir $DEST/jre
 cp -r $JRE/* $DEST/jre
 cp -r jar $DEST
-cp start.sh $DEST

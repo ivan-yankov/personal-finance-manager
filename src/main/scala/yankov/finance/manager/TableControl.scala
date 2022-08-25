@@ -1,4 +1,4 @@
-package org.yankov.finance.manager
+package yankov.finance.manager
 
 import com.toedter.calendar.JDateChooser
 

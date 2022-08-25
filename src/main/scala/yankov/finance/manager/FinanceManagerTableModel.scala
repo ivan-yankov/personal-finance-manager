@@ -1,4 +1,4 @@
-package org.yankov.finance.manager
+package yankov.finance.manager
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}

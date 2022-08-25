@@ -1,4 +1,4 @@
-package org.yankov.finance.manager
+package yankov.finance.manager
 
 import java.time.{Instant, LocalDate, ZoneId}
 import java.time.format.DateTimeFormatter

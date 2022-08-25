@@ -1,4 +1,4 @@
-package org.yankov.finance.manager
+package yankov.finance.manager
 
 import java.awt.Color
 import java.awt.event.{ActionEvent, ActionListener}

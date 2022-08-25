@@ -1,4 +1,4 @@
-package org.yankov.finance
+package yankov.finance
 
 import java.time.LocalDate
 

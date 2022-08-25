@@ -11,7 +11,6 @@ launch
 .bsp
 test-data/
 *.wav
-lib/math-scala-2.12-assembly-1.0.jar
 jar/
 AppDir
 *.AppImage
