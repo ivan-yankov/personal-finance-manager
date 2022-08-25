@@ -2,7 +2,7 @@ package yankov.finance.manager
 
 import Resources._
 import com.toedter.calendar.JDateChooser
-import org.yankov.finance.manager.Buttons._
+import yankov.finance.manager.Buttons._
 
 import java.awt.{ComponentOrientation, FlowLayout}
 import java.nio.file.{Files, Paths}
