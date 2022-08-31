@@ -33,7 +33,7 @@ object Resources {
   val emptyDate: LocalDate = LocalDate.MIN
   val emptyValue: Double = 0.0
 
-  def printValue(x: Double): String = String.format(doubleFormat, x)
+  def printValue(x: Double): String = doubleFormat.format(x)
 
   def printValue(date: LocalDate): String = if (emptyDate.equals(date)) "" else date.format(dateTimeFormatter)
 
@@ -45,5 +45,5 @@ object Resources {
 
   def toLocalDate(date: Date): LocalDate = Instant.ofEpochMilli(date.getTime).atZone(Resources.zoneId).toLocalDate
 
-  def balanceLabel(value: Double): String = String.format("Баланс: %.2f", value)
+  def balanceLabel(value: Double): String = "Баланс: %.2f".format(value)
 }
