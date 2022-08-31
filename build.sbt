@@ -1,32 +1,16 @@
-import java.nio.file.{Files, Path, Paths}
-import scala.collection.JavaConverters._
+lazy val root = (project in file("."))
+  .settings(
+    organization := "yankov",
+    name := "personal-finance-manager",
+    scalaVersion := "2.12.15",
+    scalacOptions ++= Seq("-deprecation", "-feature"),
+    version := readVersion.value(),
 
-name := "personal-finance-manager"
+    resolvers += Resolver.jcenterRepo,
 
-version := "0.1"
+    Test / parallelExecution := false,
 
-scalaVersion := "2.13.8"
-
-val collectDependencies = taskKey[Unit]("collect dependencies")
-collectDependencies := {
-  val jarDir = Paths.get("jar")
-  if (!Files.exists(jarDir)) Files.createDirectories(jarDir)
-
-  println("Collect dependencies")
-
-  def collectJarsFromDir(files: Seq[Path]): Unit = {
-    files.filter(x => x.toString.endsWith(".jar"))
-      .foreach(
-        x => {
-          val src = x
-          val dest = Paths.get(jarDir.toString, x.getFileName.toString)
-          Files.copy(src, dest)
-        }
-      )
-  }
-
-  val cp: Seq[File] = (Runtime / fullClasspath).value.files
-  collectJarsFromDir(cp.map(x => x.toPath))
-
-  collectJarsFromDir(Files.walk(Paths.get("target", "scala-2.13"), 1).iterator().asScala.toList)
-}
+    fork := true,
+    outputStrategy := Some(StdoutOutput),
+    connectInput := true,
+  )
