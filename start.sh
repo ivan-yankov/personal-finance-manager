@@ -1,1 +1,1 @@
-./personal-finance-manager-x86_64.AppImage $PWD/income.csv $PWD/expense.csv
+./personal-finance-manager-x86_64.AppImage $(tput lines) $(tput cols) $PWD/income.csv $PWD/expense.csv
