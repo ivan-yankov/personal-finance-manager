@@ -3,7 +3,7 @@ package yankov.finance.manager
 import console.ConsoleColor
 import console.menu.ConsoleMenu
 import console.model.{Command, Pair}
-import console.table.{ConsoleTableEditor, Table}
+import console.table.Table
 import console.util.{ConsoleTableFactory, TableParser}
 import yankov.finance.manager.Resources._
 import yankov.finance.manager.Utils._
@@ -36,7 +36,8 @@ object Menu {
       ).asJava,
       programArguments.consoleLines,
       programArguments.consoleColumns,
-      programTitle
+      programTitle,
+      () => consoleReadLine()
     )
   }
 
@@ -71,10 +72,17 @@ object Menu {
         val b = calculateBalanceAtDate(date)
         val color = if (scala.math.signum(b) < 0) ConsoleColor.RED else ConsoleColor.DARK_GREEN
         Main.getMenu.setLogMessage(colorText(printBalance(b), color))
-      }
+      },
+      () => consoleReadLine()
     ).show()
   }
 
   private def editCsv(file: String, consoleLines: Int, consoleColumns: Int, title: String): Unit =
-    ConsoleTableFactory.createConsoleTableEditor(Paths.get(file), consoleLines, consoleColumns, title).show()
+    ConsoleTableFactory.createConsoleTableEditor(
+      Paths.get(file),
+      consoleLines,
+      consoleColumns,
+      title,
+      () => consoleReadLine()
+    ).show()
 }

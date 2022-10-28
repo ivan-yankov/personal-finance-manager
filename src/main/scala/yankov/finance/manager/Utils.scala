@@ -21,6 +21,8 @@ object Utils {
     if (input.isEmpty && defaultValue.nonEmpty) defaultValue else input
   }
 
+  def consoleReadLine: () => String = scala.io.StdIn.readLine
+
   def writeError(s: String): Unit = System.err.println(s)
 
   def readFile(fileName: String): String = Files.readString(Paths.get(fileName))
@@ -51,5 +53,5 @@ object Utils {
     }
   }
 
-  private def instantNow = Date.from(LocalDate.now(zoneId).atStartOfDay(zoneId).toInstant)
+  private def instantNow: Date = Date.from(LocalDate.now(zoneId).atStartOfDay(zoneId).toInstant)
 }
