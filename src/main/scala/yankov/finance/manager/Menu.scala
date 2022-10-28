@@ -1,6 +1,7 @@
 package yankov.finance.manager
 
 import console.ConsoleColor
+import console.menu.ConsoleMenu
 import console.model.{Command, Pair}
 import console.table.{ConsoleTableEditor, Table}
 import console.util.{ConsoleTableFactory, TableParser}
@@ -11,8 +12,8 @@ import java.nio.file.Paths
 import java.time.LocalDate
 import scala.jdk.CollectionConverters._
 
-object Commands {
-  def showMenu(programArguments: ProgramArguments): Unit = {
+object Menu {
+  def createMenu(programArguments: ProgramArguments): ConsoleMenu = {
     def commands: List[Command] = List(
       new Command(() => editIncome(programArguments), income),
       new Command(() => editExpense(programArguments), expense),
@@ -36,7 +37,7 @@ object Commands {
       programArguments.consoleLines,
       programArguments.consoleColumns,
       programTitle
-    ).show()
+    )
   }
 
   def editIncome(programArguments: ProgramArguments): Unit =
@@ -68,10 +69,8 @@ object Commands {
       programArguments.consoleColumns,
       date => {
         val b = calculateBalanceAtDate(date)
-        val color = if (scala.math.signum(b) < 0) ConsoleColor.RED else ConsoleColor.GREEN
-
-        colorText(printBalance(b), color)
-        ???
+        val color = if (scala.math.signum(b) < 0) ConsoleColor.RED else ConsoleColor.DARK_GREEN
+        Main.getMenu.setLogMessage(colorText(printBalance(b), color))
       }
     ).show()
   }

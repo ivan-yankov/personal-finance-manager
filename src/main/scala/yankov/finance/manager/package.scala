@@ -1,14 +1,12 @@
 package yankov.finance
 
-import console.editor.Table
+import console.table.Table
 
 import java.time.LocalDate
 import scala.jdk.CollectionConverters._
 
 package object manager {
   case class ProgramArguments(consoleLines: Int, consoleColumns: Int, incomeFile: String, expenseFile: String)
-
-  case class Command(description: String, execute: ProgramArguments => Unit)
 
   case class TableRow(description: String, date: LocalDate, value: Double)
 

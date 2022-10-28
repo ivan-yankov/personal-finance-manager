@@ -9,9 +9,11 @@ import java.util.Date
 
 object Utils {
   def writeln(s: String = "", color: String = ""): Unit = {
-    if (color.nonEmpty) println(color + s + ConsoleColor.RESET)
+    if (color.nonEmpty) println(colorText(s, color))
     else println(s)
   }
+
+  def colorText(s: String, color: String): String = color + s + ConsoleColor.RESET
 
   def readLine(message: String, defaultValue: String = ""): String = {
     val dv = if (defaultValue.nonEmpty) " [" + defaultValue + "]" else ""
@@ -38,8 +40,10 @@ object Utils {
   def clearConsole(): Unit = {
     try {
       val os = System.getProperty("os.name")
-      val pb = if (os.contains("Windows")) new ProcessBuilder("cmd", "/c", "cls")
-      else new ProcessBuilder("clear")
+      val pb = {
+        if (os.contains("Windows")) new ProcessBuilder("cmd", "/c", "cls")
+        else new ProcessBuilder("clear")
+      }
       val p = pb.inheritIO.start
       p.waitFor
     } catch {
@@ -47,5 +51,5 @@ object Utils {
     }
   }
 
-  private def instantNow: Date = Date.from(LocalDate.now(zoneId).atStartOfDay(zoneId).toInstant)
+  private def instantNow = Date.from(LocalDate.now(zoneId).atStartOfDay(zoneId).toInstant)
 }

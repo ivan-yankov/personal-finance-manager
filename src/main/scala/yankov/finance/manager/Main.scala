@@ -2,8 +2,11 @@ package yankov.finance.manager
 
 import Resources._
 import Utils._
+import console.menu.ConsoleMenu
 
 object Main {
+  private var menu: ConsoleMenu = _
+
   def main(args: Array[String]): Unit = {
     val numberOfRequiredArguments = 4
     if (args.length < numberOfRequiredArguments) {
@@ -16,6 +19,16 @@ object Main {
       return
     }
 
-    Commands.showMenu()
+    menu = Menu.createMenu(
+      ProgramArguments(
+        consoleLines = args(0).toInt,
+        consoleColumns = args(1).toInt,
+        incomeFile = args(2),
+        expenseFile = args(3)
+      )
+    )
+    menu.show()
   }
+
+  def getMenu: ConsoleMenu = menu
 }

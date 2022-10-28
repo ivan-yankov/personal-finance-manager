@@ -10,10 +10,10 @@ object Resources {
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
   val programTitle: String = "Персонално счетоводство"
+  val mainMenuTitle: String = "Меню"
   val income: String = "Приходи"
   val expense: String = "Разходи"
   val balance: String = "Баланс"
-  val select: String = "Избор"
   val exit: String = "Изход"
   val balanceDate: String = "Дата за баланс"
 
