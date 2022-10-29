@@ -14,6 +14,7 @@ object Resources {
   val income: String = "Приходи"
   val expense: String = "Разходи"
   val balance: String = "Баланс"
+  val balanceAt: String = "Баланс към"
   val exit: String = "Изход"
   val balanceDate: String = "Дата за баланс"
 

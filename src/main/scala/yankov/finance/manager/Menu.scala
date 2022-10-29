@@ -65,13 +65,13 @@ object Menu {
     }
 
     ConsoleTableFactory.createDateConsoleSelector(
-      today,
+      console.util.Utils.firstDayOfCurrentMonth(),
       programArguments.consoleLines,
       programArguments.consoleColumns,
       date => {
         val b = calculateBalanceAtDate(date)
         val color = if (scala.math.signum(b) < 0) ConsoleColor.RED else ConsoleColor.DARK_GREEN
-        Main.getMenu.setLogMessage(colorText(printBalance(b), color))
+        Main.getMenu.setLogMessage(colorText(printBalance(b, date), color))
       },
       () => consoleReadLine()
     ).show()

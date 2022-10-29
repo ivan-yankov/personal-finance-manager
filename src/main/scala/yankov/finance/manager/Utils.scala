@@ -27,7 +27,7 @@ object Utils {
 
   def readFile(fileName: String): String = Files.readString(Paths.get(fileName))
 
-  def printBalance(value: Double): String = s"$balance: %.2f".format(value)
+  def printBalance(value: Double, date: LocalDate): String = s"$balanceAt ${printDate(date)}: %.2f".format(value)
 
   def parseDouble(s: String): Double = s.toDouble
 
