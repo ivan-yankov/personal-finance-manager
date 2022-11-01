@@ -51,6 +51,7 @@ object Menu {
     def tableTotal(table: Table[String], date: LocalDate): Double = {
       table
         .getData
+        .filterNot(x => List(x.tail.head, x.tail.tail.head).contains(""))
         .map(x => TableRow(x.head, parseDate(x.tail.head), parseDouble(x.tail.tail.head)))
         .filterNot(x => x.date.equals(emptyDate))
         .filter(x => x.date.isBefore(date) || x.date.isEqual(date))
