@@ -1,10 +1,10 @@
 package yankov.finance.manager
 
 import console.ConsoleColor
-import console.menu.ConsoleMenu
+import console.factory.ConsoleTableFactory
 import console.model.{Command, Pair}
-import console.table.Table
-import console.util.{ConsoleTableFactory, TableParser}
+import console.operations.{ConsoleOperations, FileOperations}
+import console.table.{ConsoleMenu, Table, TableParser}
 import yankov.finance.manager.Resources._
 import yankov.finance.manager.Utils._
 
@@ -13,6 +13,8 @@ import java.time.LocalDate
 import scala.jdk.CollectionConverters._
 
 object Menu {
+  private val consoleOperations = new ConsoleOperations()
+
   def createMenu(programArguments: ProgramArguments): ConsoleMenu = {
     def commands: List[Command] = List(
       new Command(() => editIncome(programArguments), income),
@@ -37,7 +39,7 @@ object Menu {
       programArguments.consoleLines,
       programArguments.consoleColumns,
       programTitle,
-      () => consoleReadLine()
+      consoleOperations
     )
   }
 
@@ -53,7 +55,6 @@ object Menu {
         .getData
         .filterNot(x => List(x.tail.head, x.tail.tail.head).contains(""))
         .map(x => TableRow(x.head, parseDate(x.tail.head), parseDouble(x.tail.tail.head)))
-        .filterNot(x => x.date.equals(emptyDate))
         .filter(x => x.date.isBefore(date) || x.date.isEqual(date))
         .map(x => x.value)
         .sum
@@ -66,7 +67,7 @@ object Menu {
     }
 
     ConsoleTableFactory.createDateConsoleSelector(
-      console.util.Utils.firstDayOfCurrentMonth(),
+      console.Utils.firstDayOfCurrentMonth(),
       programArguments.consoleLines,
       programArguments.consoleColumns,
       date => {
@@ -74,7 +75,7 @@ object Menu {
         val color = if (scala.math.signum(b) < 0) ConsoleColor.RED else ConsoleColor.DARK_GREEN
         Main.getMenu.setLogMessage(colorText(printBalance(b, date), color))
       },
-      () => consoleReadLine()
+      consoleOperations
     ).show()
   }
 
@@ -84,6 +85,7 @@ object Menu {
       consoleLines,
       consoleColumns,
       title,
-      () => consoleReadLine()
+      consoleOperations,
+      new FileOperations(consoleOperations)
     ).show()
 }

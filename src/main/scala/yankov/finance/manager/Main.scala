@@ -2,7 +2,7 @@ package yankov.finance.manager
 
 import Resources._
 import Utils._
-import console.menu.ConsoleMenu
+import console.table.ConsoleMenu
 
 object Main {
   private var menu: ConsoleMenu = _
