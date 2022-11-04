@@ -1,5 +1,7 @@
 import java.nio.file.Paths
 
+val scalaTestVersion = "3.2.14"
+
 lazy val root = (project in file("."))
   .settings(
     organization := "yankov",
@@ -13,6 +15,10 @@ lazy val root = (project in file("."))
     resolvers += Resolver.jcenterRepo,
 
     Test / parallelExecution := false,
+
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % scalaTestVersion % Test
+    ),
 
     fork := true,
     outputStrategy := Some(StdoutOutput),

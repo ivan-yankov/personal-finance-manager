@@ -50,33 +50,33 @@ object Menu {
     editCsv(programArguments.expenseFile, programArguments.consoleLines, programArguments.consoleColumns, expense)
 
   def calculateBalance(programArguments: ProgramArguments): Unit = {
-    def tableTotal(table: Table[String], date: LocalDate): Double = {
-      table
-        .getData
-        .filterNot(x => List(x.tail.head, x.tail.tail.head).contains(""))
-        .map(x => TableRow(x.head, parseDate(x.tail.head), parseDouble(x.tail.tail.head)))
-        .filter(x => x.date.isBefore(date) || x.date.isEqual(date))
-        .map(x => x.value)
-        .sum
-    }
-
-    def calculateBalanceAtDate(date: LocalDate): Double = {
-      val incomeTable = TableParser.fromCsv(readFile(programArguments.incomeFile))
-      val expenseTable = TableParser.fromCsv(readFile(programArguments.expenseFile))
-      tableTotal(incomeTable, date) - tableTotal(expenseTable, date)
-    }
-
     ConsoleTableFactory.createDateConsoleSelector(
       console.Utils.firstDayOfCurrentMonth(),
       programArguments.consoleLines,
       programArguments.consoleColumns,
       date => {
-        val b = calculateBalanceAtDate(date)
+        val b = calculateBalanceAtDate(date, programArguments)
         val color = if (scala.math.signum(b) < 0) ConsoleColor.RED else ConsoleColor.DARK_GREEN
         Main.getMenu.setLogMessage(colorText(printBalance(b, date), color))
       },
       consoleOperations
     ).show()
+  }
+
+  def tableTotal(table: Table[String], date: LocalDate): Double = {
+    table
+      .getData
+      .filterNot(x => List(x.tail.head, x.tail.tail.head).contains(""))
+      .map(x => TableRow(x.head, parseDate(x.tail.head), parseDouble(x.tail.tail.head)))
+      .filter(x => x.date.isBefore(date) || x.date.isEqual(date))
+      .map(x => x.value)
+      .sum
+  }
+
+  def calculateBalanceAtDate(date: LocalDate, programArguments: ProgramArguments): Double = {
+    val incomeTable = TableParser.fromCsv(readFile(programArguments.incomeFile))
+    val expenseTable = TableParser.fromCsv(readFile(programArguments.expenseFile))
+    tableTotal(incomeTable, date) - tableTotal(expenseTable, date)
   }
 
   private def editCsv(file: String, consoleLines: Int, consoleColumns: Int, title: String): Unit =
