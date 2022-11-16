@@ -66,7 +66,7 @@ object Menu {
   def tableTotal(table: Table[String], date: LocalDate): Double = {
     table
       .getDataAsScala
-      .filterNot(x => List(x.tail.head, x.tail.tail.head).contains(""))
+      .filterNot(x => List(x.tail.head, x.tail.tail.head).map(_.getValue).contains(""))
       .map(x => TableRow(x.head.getValue, parseDate(x.tail.head.getValue), parseDouble(x.tail.tail.head.getValue)))
       .filter(x => x.date.isBefore(date) || x.date.isEqual(date))
       .map(x => x.value)
