@@ -17,12 +17,13 @@ object Menu {
 
   def createMenu(programArguments: ProgramArguments): ConsoleMenu = {
     def commands: List[Command] = List(
-      new Command(() => editIncome(programArguments), income),
-      new Command(() => editExpense(programArguments), expense),
-      new Command(() => calculateBalance(programArguments), balance),
+      new Command("income", () => editIncome(programArguments), income),
+      new Command("expense", () => editExpense(programArguments), expense),
+      new Command("balance", () => calculateBalance(programArguments), balance),
       new Command(
+        "exit",
         () => {
-          println()
+          consoleOperations.clearConsole()
           System.exit(0)
         },
         exit
@@ -56,7 +57,7 @@ object Menu {
       programArguments.consoleColumns,
       date => {
         val b = calculateBalanceAtDate(date, programArguments)
-        val color = if (scala.math.signum(b) < 0) ConsoleColor.RED else ConsoleColor.DARK_GREEN
+        val color = if (scala.math.signum(b) < 0) ConsoleColor.RED else ConsoleColor.GREEN
         Main.getMenu.setLogMessage(colorText(printBalance(b, date), color))
       },
       consoleOperations
