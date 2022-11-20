@@ -5,7 +5,6 @@ import console.factory.ConsoleTableFactory
 import console.model.{Command, Pair}
 import console.operations.{ConsoleOperations, FileOperations}
 import console.table.{ConsoleMenu, Table, TableParser}
-import yankov.finance.manager.Resources._
 import yankov.finance.manager.Utils._
 
 import java.nio.file.Paths
@@ -13,44 +12,47 @@ import java.time.LocalDate
 import scala.jdk.CollectionConverters._
 
 object Menu {
-  private val consoleOperations = new ConsoleOperations()
-
-  def createMenu(programArguments: ProgramArguments): ConsoleMenu = {
+  def createMenu(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): ConsoleMenu = {
     def commands: List[Command] = List(
-      new Command("income", () => editIncome(programArguments), income),
-      new Command("expense", () => editExpense(programArguments), expense),
-      new Command("balance", () => calculateBalance(programArguments), balance),
-      new Command(
-        "exit",
-        () => {
-          consoleOperations.clearConsole()
-          System.exit(0)
-        },
-        exit
-      )
+      new Command("income", () => editIncome(programArguments, consoleOperations), Resources.income),
+      new Command("expense", () => editExpense(programArguments, consoleOperations), Resources.expense),
+      new Command("balance", () => calculateBalance(programArguments, consoleOperations), Resources.balance),
+      new Command("exit", () => exit(consoleOperations), Resources.exit)
     )
 
     ConsoleTableFactory.createConsoleMenu(
       List(
         new Pair(
-          mainMenuTitle,
+          Resources.mainMenuTitle,
           commands.asJava
         )
       ).asJava,
       programArguments.consoleLines,
       programArguments.consoleColumns,
-      programTitle,
+      Resources.programTitle,
       consoleOperations
     )
   }
 
-  def editIncome(programArguments: ProgramArguments): Unit =
-    editCsv(programArguments.incomeFile, programArguments.consoleLines, programArguments.consoleColumns, income)
+  def editIncome(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): Unit =
+    editCsv(
+      programArguments.incomeFile,
+      programArguments.consoleLines,
+      programArguments.consoleColumns,
+      Resources.income,
+      consoleOperations
+    )
 
-  def editExpense(programArguments: ProgramArguments): Unit =
-    editCsv(programArguments.expenseFile, programArguments.consoleLines, programArguments.consoleColumns, expense)
+  def editExpense(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): Unit =
+    editCsv(
+      programArguments.expenseFile,
+      programArguments.consoleLines,
+      programArguments.consoleColumns,
+      Resources.expense,
+      consoleOperations
+    )
 
-  def calculateBalance(programArguments: ProgramArguments): Unit = {
+  def calculateBalance(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): Unit = {
     ConsoleTableFactory.createDateConsoleSelector(
       console.Utils.firstDayOfCurrentMonth(),
       programArguments.consoleLines,
@@ -58,7 +60,11 @@ object Menu {
       date => {
         val b = calculateBalanceAtDate(date, programArguments)
         val color = if (scala.math.signum(b) < 0) ConsoleColor.RED else ConsoleColor.GREEN
-        Main.getMenu.setLogMessage(colorText(printBalance(b, date), color))
+        consoleOperations.clearConsole()
+        println(colorText(printBalance(b, date), color))
+        println()
+        println("Press a key to return...")
+        consoleOperations.readKey()
       },
       consoleOperations
     ).show()
@@ -80,7 +86,16 @@ object Menu {
     tableTotal(incomeTable, date) - tableTotal(expenseTable, date)
   }
 
-  private def editCsv(file: String, consoleLines: Int, consoleColumns: Int, title: String): Unit =
+  def exit(consoleOperations: ConsoleOperations): Unit = {
+    consoleOperations.clearConsole()
+    System.exit(0)
+  }
+
+  private def editCsv(file: String,
+                      consoleLines: Int,
+                      consoleColumns: Int,
+                      title: String,
+                      consoleOperations: ConsoleOperations): Unit =
     ConsoleTableFactory.createConsoleTableEditor(
       Paths.get(file),
       consoleLines,
