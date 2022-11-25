@@ -1,6 +1,6 @@
 package yankov.finance.manager
 
-import console.ConsoleColor
+import yankov.console.ConsoleColor
 import yankov.finance.manager.Resources._
 
 import java.nio.file.{Files, Paths}

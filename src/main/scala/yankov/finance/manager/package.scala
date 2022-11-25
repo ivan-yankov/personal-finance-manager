@@ -1,6 +1,6 @@
 package yankov.finance
 
-import console.table.{Cell, Table}
+import yankov.console.table.{Cell, Table}
 
 import java.time.LocalDate
 import scala.jdk.CollectionConverters._

@@ -1,11 +1,14 @@
 package yankov.finance.manager
 
-import console.ConsoleColor
-import console.factory.ConsoleTableFactory
-import console.model.{Command, Pair}
-import console.operations.{ConsoleOperations, FileOperations}
-import console.table.{ConsoleMenu, Table, TableParser}
+import yankov.console.ConsoleColor
+import yankov.console.factory.ConsoleTableFactory
+import yankov.console.model.Command
+import yankov.console.operations.{ConsoleOperations, FileOperations}
+import yankov.console.table.viewer.ConsoleMenu
+import yankov.console.table.{Table, TableParser}
 import yankov.finance.manager.Utils._
+import yankov.jutils.functional.ImmutableList
+import yankov.jutils.functional.tuples.Tuple
 
 import java.nio.file.Paths
 import java.time.LocalDate
@@ -14,19 +17,20 @@ import scala.jdk.CollectionConverters._
 object Menu {
   def createMenu(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): ConsoleMenu = {
     def commands: List[Command] = List(
-      new Command("income", () => editIncome(programArguments, consoleOperations), Resources.income),
-      new Command("expense", () => editExpense(programArguments, consoleOperations), Resources.expense),
-      new Command("balance", () => calculateBalance(programArguments, consoleOperations), Resources.balance),
-      new Command("exit", () => exit(consoleOperations), Resources.exit)
+      new Command("income", _ => editIncome(programArguments, consoleOperations), Resources.income),
+      new Command("expense", _ => editExpense(programArguments, consoleOperations), Resources.expense),
+      new Command("balance", _ => calculateBalance(programArguments, consoleOperations), Resources.balance),
+      new Command("exit", _ => exit(consoleOperations), Resources.exit)
     )
 
     ConsoleTableFactory.createConsoleMenu(
-      List(
-        new Pair(
-          Resources.mainMenuTitle,
-          commands.asJava
-        )
-      ).asJava,
+      ImmutableList.of(
+        List(
+          new Tuple(
+            Resources.mainMenuTitle,
+            ImmutableList.of(commands.asJava)
+          )
+        ).asJava),
       programArguments.consoleLines,
       programArguments.consoleColumns,
       Resources.programTitle,
@@ -54,7 +58,7 @@ object Menu {
 
   def calculateBalance(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): Unit = {
     ConsoleTableFactory.createDateConsoleSelector(
-      console.Utils.firstDayOfCurrentMonth(),
+      yankov.console.Utils.firstDayOfCurrentMonth(),
       programArguments.consoleLines,
       programArguments.consoleColumns,
       date => {
@@ -81,8 +85,14 @@ object Menu {
   }
 
   def calculateBalanceAtDate(date: LocalDate, programArguments: ProgramArguments): Double = {
-    val incomeTable = TableParser.fromCsv(readFile(programArguments.incomeFile))
-    val expenseTable = TableParser.fromCsv(readFile(programArguments.expenseFile))
+    val incomeTable = TableParser
+      .fromCsv(readFile(programArguments.incomeFile))
+      .getRight
+      .orElseThrow()
+    val expenseTable = TableParser
+      .fromCsv(readFile(programArguments.expenseFile))
+      .getRight
+      .orElseThrow()
     tableTotal(incomeTable, date) - tableTotal(expenseTable, date)
   }
 
@@ -103,5 +113,5 @@ object Menu {
       title,
       consoleOperations,
       new FileOperations(consoleOperations)
-    ).show()
+    ).getRight.orElseThrow().show()
 }
