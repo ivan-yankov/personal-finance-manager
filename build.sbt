@@ -9,6 +9,7 @@ lazy val root = (project in file("."))
     scalaVersion := "2.13.8",
     scalacOptions ++= Seq("-deprecation", "-feature"),
     version := readVersion.value(),
+    isSnapshot := true,
 
     targetDir := Paths.get("target", "scala-2.13"),
 
