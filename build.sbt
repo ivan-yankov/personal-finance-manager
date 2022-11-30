@@ -20,7 +20,7 @@ lazy val root = (project in file("."))
     Test / parallelExecution := false,
 
     libraryDependencies ++= Seq(
-      "yankov" % "console-utils" % consoleUtilsVersion,
+      "yankov" % "console-utils-assembly" % consoleUtilsVersion,
       "org.scalatest" %% "scalatest" % scalaTestVersion % Test
     ),
 
