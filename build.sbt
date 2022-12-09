@@ -1,7 +1,8 @@
 import java.nio.file.Paths
 
-val scalaTestVersion = "3.2.14"
 val consoleUtilsVersion = "latest"
+val argParserVersion = "latest"
+val scalaTestVersion = "3.2.14"
 
 lazy val root = (project in file("."))
   .settings(
@@ -20,6 +21,7 @@ lazy val root = (project in file("."))
     Test / parallelExecution := false,
 
     libraryDependencies ++= Seq(
+      "yankov" % "arg-parser" % argParserVersion,
       "yankov" % "console-utils-assembly" % consoleUtilsVersion,
       "org.scalatest" %% "scalatest" % scalaTestVersion % Test
     ),

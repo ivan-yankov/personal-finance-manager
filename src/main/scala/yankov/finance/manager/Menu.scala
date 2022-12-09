@@ -31,8 +31,8 @@ object Menu {
             ImmutableList.of(commands.asJava)
           )
         ).asJava),
-      programArguments.consoleLines,
-      programArguments.consoleColumns,
+      programArguments.getConsoleLines,
+      programArguments.getConsoleColumns,
       Resources.programTitle,
       consoleOperations
     )
@@ -40,18 +40,18 @@ object Menu {
 
   def editIncome(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): Unit =
     editCsv(
-      programArguments.incomeFile,
-      programArguments.consoleLines,
-      programArguments.consoleColumns,
+      programArguments.getIncomeFile,
+      programArguments.getConsoleLines,
+      programArguments.getConsoleColumns,
       Resources.income,
       consoleOperations
     )
 
   def editExpense(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): Unit =
     editCsv(
-      programArguments.expenseFile,
-      programArguments.consoleLines,
-      programArguments.consoleColumns,
+      programArguments.getExpenseFile,
+      programArguments.getConsoleLines,
+      programArguments.getConsoleColumns,
       Resources.expense,
       consoleOperations
     )
@@ -59,8 +59,8 @@ object Menu {
   def calculateBalance(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): Unit = {
     ConsoleTableFactory.createDateConsoleSelector(
       yankov.console.Utils.firstDayOfCurrentMonth(),
-      programArguments.consoleLines,
-      programArguments.consoleColumns,
+      programArguments.getConsoleLines,
+      programArguments.getConsoleColumns,
       date => {
         val b = calculateBalanceAtDate(date, programArguments)
         val color = if (scala.math.signum(b) < 0) ConsoleColor.RED else ConsoleColor.GREEN
@@ -86,11 +86,11 @@ object Menu {
 
   def calculateBalanceAtDate(date: LocalDate, programArguments: ProgramArguments): Double = {
     val incomeTable = TableParser
-      .fromCsv(readFile(programArguments.incomeFile))
+      .fromCsv(readFile(programArguments.getIncomeFile))
       .getRight
       .orElseThrow()
     val expenseTable = TableParser
-      .fromCsv(readFile(programArguments.expenseFile))
+      .fromCsv(readFile(programArguments.getExpenseFile))
       .getRight
       .orElseThrow()
     tableTotal(incomeTable, date) - tableTotal(expenseTable, date)
