@@ -57,7 +57,7 @@ object Menu {
     )
 
   def calculateBalance(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): Unit = {
-    ConsoleTableFactory.createDateConsoleSelector(
+    ConsoleTableFactory.createConsoleDateSelector(
       yankov.console.Utils.firstDayOfCurrentMonth(),
       programArguments.getConsoleLines,
       programArguments.getConsoleColumns,
