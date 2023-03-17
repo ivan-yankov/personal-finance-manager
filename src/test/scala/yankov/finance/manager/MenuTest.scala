@@ -3,6 +3,7 @@ package yankov.finance.manager
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
+import java.nio.file.Paths
 import java.time.LocalDate
 
 class MenuTest extends AnyFreeSpec with Matchers {
@@ -11,7 +12,7 @@ class MenuTest extends AnyFreeSpec with Matchers {
     val expectedIncome = 500.00 + 350.00
     val expectedBalance = expectedIncome - expectedExpense
     val date = LocalDate.of(2022, 11, 8)
-    val actualBalance = Menu.calculateBalanceAtDate(date, TestProgramArguments(50, 50, "income.csv", "expense.csv"))
+    val actualBalance = Menu.calculateBalanceAtDate(date, TestProgramArguments(50, 50, Paths.get(".")))
     actualBalance - expectedBalance < 0.01 shouldBe true
   }
 }

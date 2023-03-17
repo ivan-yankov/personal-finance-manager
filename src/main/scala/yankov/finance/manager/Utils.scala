@@ -3,7 +3,7 @@ package yankov.finance.manager
 import yankov.console.ConsoleColor
 import yankov.finance.manager.Resources._
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.{Files, Path}
 import java.time.{Instant, LocalDate}
 import java.util.Date
 
@@ -25,7 +25,7 @@ object Utils {
 
   def writeError(s: String): Unit = System.err.println(s)
 
-  def readFile(fileName: String): String = Files.readString(Paths.get(fileName))
+  def readFile(fileName: Path): String = Files.readString(fileName)
 
   def printBalance(value: Double, date: LocalDate): String = s"$balanceAt ${printDate(date)}: %.2f".format(value)
 

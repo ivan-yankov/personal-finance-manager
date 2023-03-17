@@ -10,7 +10,7 @@ import yankov.finance.manager.Utils._
 import yankov.jutils.functional.ImmutableList
 import yankov.jutils.functional.tuples.Tuple
 
-import java.nio.file.Paths
+import java.nio.file.{Path, Paths}
 import java.time.LocalDate
 import scala.jdk.CollectionConverters._
 
@@ -40,7 +40,7 @@ object Menu {
 
   def editIncome(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): Unit =
     editCsv(
-      programArguments.getIncomeFile,
+      getIncomeFile(programArguments.getDataDir),
       programArguments.getConsoleLines,
       programArguments.getConsoleColumns,
       Resources.income,
@@ -49,7 +49,7 @@ object Menu {
 
   def editExpense(programArguments: ProgramArguments, consoleOperations: ConsoleOperations): Unit =
     editCsv(
-      programArguments.getExpenseFile,
+      getExpenseFile(programArguments.getDataDir),
       programArguments.getConsoleLines,
       programArguments.getConsoleColumns,
       Resources.expense,
@@ -86,11 +86,11 @@ object Menu {
 
   def calculateBalanceAtDate(date: LocalDate, programArguments: ProgramArguments): Double = {
     val incomeTable = TableParser
-      .fromCsv(readFile(programArguments.getIncomeFile))
+      .fromCsv(readFile(getIncomeFile(programArguments.getDataDir)))
       .getRight
       .orElseThrow()
     val expenseTable = TableParser
-      .fromCsv(readFile(programArguments.getExpenseFile))
+      .fromCsv(readFile(getExpenseFile(programArguments.getDataDir)))
       .getRight
       .orElseThrow()
     tableTotal(incomeTable, date) - tableTotal(expenseTable, date)
@@ -101,17 +101,22 @@ object Menu {
     System.exit(0)
   }
 
-  private def editCsv(file: String,
+  private def editCsv(file: Path,
                       consoleLines: Int,
                       consoleColumns: Int,
                       title: String,
-                      consoleOperations: ConsoleOperations): Unit =
+                      consoleOperations: ConsoleOperations): Unit = {
     ConsoleTableFactory.createConsoleTableEditor(
-      Paths.get(file),
+      file,
       consoleLines,
       consoleColumns,
       title,
       consoleOperations,
       new FileOperations(consoleOperations)
     ).getRight.orElseThrow().show()
+  }
+
+  private def getIncomeFile(dataDir: Path): Path = Paths.get(dataDir.toString, "income.csv")
+
+  private def getExpenseFile(dataDir: Path): Path = Paths.get(dataDir.toString, "expense.csv")
 }
